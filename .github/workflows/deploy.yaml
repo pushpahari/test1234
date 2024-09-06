@@ -1,55 +1,202 @@
-name: Deploy Infrastructure and Application
+name: Terraform Infrastructure Provisioning
 
 on:
   push:
     branches:
-      - master  # Workflow will be triggered only on changes to the main branch
+      - "**"  # Triggers on push
+  pull_request:  # Runs on PR to check terraform plan
+    branches:
+      - master
 
 jobs:
   terraform:
-    name: Provision AWS Infrastructure
+    name: Terraform Actions
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      # Step 1: Checkout your repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Terraform
+      # Step 2: Setup Terraform CLI
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0  # specify your Terraform version
+          terraform_version: 1.5.0  # Update with your version
 
-      - name: Change directory to Terraform folder
-        working-directory: ./terraform
+      # Step 3: Initialize Terraform
+      - name: Terraform Init
+        working-directory: terraform  # Specify the directory where your Terraform files are located
         run: terraform init
 
+      # Step 4: Terraform Plan (for pull requests or branch commits)
+      - name: Terraform Plan
+        working-directory: terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: terraform plan
+
+      # Step 5: Terraform Apply (only runs on push to master branch)
       - name: Terraform Apply
-        working-directory: ./terraform
+        if: github.ref == 'refs/heads/master'  # Only apply on master branch
+        working-directory: infra
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: terraform apply -auto-approve
 
-  helm:
-    name: Deploy Application using Helm
-    runs-on: ubuntu-latest
-    needs: terraform
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v1
+# name: "Terraform Infrastructure Change Management Pipeline with GitHub Actions"
+ 
+# on:
+#  push:
+#    branches:
+#    - main
+#    paths:
+#    - terraform/**
+#  pull_request:
+#    branches:
+#    - main
+#    paths:
+#    - terraform/**
+ 
+# env:
+#  # verbosity setting for Terraform logs
+#  TF_LOG: INFO
+#  # Credentials for deployment to AWS
+#  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#  # S3 bucket for the Terraform state
+#  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+ 
+# jobs:
+#  terraform:
+#    name: "Terraform Infrastructure Change Management"
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        shell: bash
+#        # We keep Terraform files in the terraform directory.
+#        working-directory: ./terraform
+ 
+#    steps:
+#      - name: Checkout the repository to the runner
+#        uses: actions/checkout@v2
+ 
+#      - name: Setup Terraform with specified version on the runner
+#        uses: hashicorp/setup-terraform@v2
+#        with:
+#          terraform_version: 1.3.0
+    
+#      - name: Terraform init
+#        id: init
+#        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
+ 
+#      - name: Terraform format
+#        id: fmt
+#        run: terraform fmt -check
+    
+#      - name: Terraform validate
+#        id: validate
+#        run: terraform validate
+ 
+#      - name: Terraform plan
+#        id: plan
+#        if: github.event_name == 'pull_request'
+#        run: terraform plan -no-color -input=false
+#        continue-on-error: true
+    
+#      - uses: actions/github-script@v6
+#        if: github.event_name == 'pull_request'
+#        env:
+#          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+#        with:
+#          script: |
+#            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+#            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+#            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+#            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+ 
+#            <details><summary>Show Plan</summary>
+ 
+#            \`\`\`\n
+#            ${process.env.PLAN}
+#            \`\`\`
+ 
+#            </details>
+#            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+ 
+#            github.rest.issues.createComment({
+#              issue_number: context.issue.number,
+#              owner: context.repo.owner,
+#              repo: context.repo.repo,
+#              body: output
+#            })
+ 
+#      - name: Terraform Plan Status
+#        if: steps.plan.outcome == 'failure'
+#        run: exit 1
+ 
+#      - name: Terraform Apply
+#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#        run: terraform apply -auto-approve -input=false
 
-      - name: Configure AWS CLI
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region ${{ secrets.AWS_REGION }}
 
-      - name: Get EKS Cluster Credentials
-        run: aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name your-eks-cluster-name
+# # name: Deploy Infrastructure and Application
 
-      - name: Install Helm Chart
-        working-directory: ./helm/my-app-chart
-        run: helm upgrade --install my-app . --namespace default --create-namespace
+# # on:
+# #   push:
+# #     branches:
+# #       - master  # Workflow will be triggered only on changes to the main branch
+
+# # jobs:
+# #   terraform:
+# #     name: Provision AWS Infrastructure
+# #     runs-on: ubuntu-latest
+# #     steps:
+# #       - name: Checkout repository
+# #         uses: actions/checkout@v3
+
+# #       - name: Set up Terraform
+# #         uses: hashicorp/setup-terraform@v2
+# #         with:
+# #           terraform_version: 1.5.0  # specify your Terraform version
+
+# #       - name: Change directory to Terraform folder
+# #         working-directory: ./terraform
+# #         run: terraform init
+
+# #       - name: Terraform Apply
+# #         working-directory: ./terraform
+# #         env:
+# #           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+# #           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+# #           AWS_REGION: ${{ secrets.AWS_REGION }}
+# #         run: terraform apply -auto-approve
+
+# #   helm:
+# #     name: Deploy Application using Helm
+# #     runs-on: ubuntu-latest
+# #     needs: terraform
+# #     steps:
+# #       - name: Checkout repository
+# #         uses: actions/checkout@v3
+
+# #       - name: Set up Helm
+# #         uses: azure/setup-helm@v1
+
+# #       - name: Configure AWS CLI
+# #         run: |
+# #           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+# #           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+# #           aws configure set region ${{ secrets.AWS_REGION }}
+
+# #       - name: Get EKS Cluster Credentials
+# #         run: aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name your-eks-cluster-name
+
+# #       - name: Install Helm Chart
+# #         working-directory: ./helm/my-app-chart
+# #         run: helm upgrade --install my-app . --namespace default --create-namespace
