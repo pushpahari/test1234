@@ -3,7 +3,7 @@ name: Deploy Infrastructure and Application
 on:
   push:
     branches:
-      - master  # or the branch you want to trigger the workflow
+      - master  # Workflow will be triggered only on changes to the main branch
 
 jobs:
   terraform:
@@ -18,10 +18,12 @@ jobs:
         with:
           terraform_version: 1.5.0  # specify your Terraform version
 
-      - name: Terraform Init
+      - name: Change directory to Terraform folder
+        working-directory: ./terraform
         run: terraform init
 
       - name: Terraform Apply
+        working-directory: ./terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -40,12 +42,14 @@ jobs:
         uses: azure/setup-helm@v1
 
       - name: Configure AWS CLI
-        run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} && \
-              aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} && \
-              aws configure set region ${{ secrets.AWS_REGION }}
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region ${{ secrets.AWS_REGION }}
 
       - name: Get EKS Cluster Credentials
         run: aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name your-eks-cluster-name
 
       - name: Install Helm Chart
-        run: helm upgrade --install my-app ./helm/my-app-chart --namespace default --create-namespace
+        working-directory: ./helm/my-app-chart
+        run: helm upgrade --install my-app . --namespace default --create-namespace
