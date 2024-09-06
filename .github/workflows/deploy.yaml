@@ -45,7 +45,7 @@ jobs:
       # Step 5: Terraform Apply (only runs on push to master branch)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master'  # Only apply on master branch
-        working-directory: infra
+        working-directory: terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
