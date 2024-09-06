@@ -3,7 +3,7 @@ name: Deploy Infrastructure and Application
 on:
   push:
     branches:
-      - main  # or the branch you want to trigger the workflow
+      - master  # or the branch you want to trigger the workflow
 
 jobs:
   terraform:
