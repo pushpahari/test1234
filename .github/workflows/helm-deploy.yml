@@ -12,7 +12,7 @@ on:
 env:
   EKS_CLUSTER_NAME: eks-cluster
   AWS_REGION: ap-south-1
-  HELM_FOLDER: ./redis-helm-chart
+  HELM_FOLDER: redis-helm-chart
 
 jobs:
   prepare:
