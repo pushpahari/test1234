@@ -69,12 +69,13 @@ jobs:
 
       - name: Deploy Helm Charts
         run: |
-          for chart in $(ls -d ${{ env.HELM_FOLDER }}/*); do
+          for chart in $(find ${{ env.HELM_FOLDER }} -type d -exec test -f {}/Chart.yaml \; -print); do
             chart_name=$(basename $chart)
             chart_version=$(grep "version:" $chart/Chart.yaml | cut -d ' ' -f 2)
             release_name="${chart_name}-${chart_version}"
             helm upgrade --install $release_name $chart --namespace default
           done
+
 
 
 
