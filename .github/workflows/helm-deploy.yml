@@ -83,7 +83,7 @@ jobs:
               echo "Release Name: $release_name"
 
               # Deploy using Helm
-              helm upgrade --install "$release_name" "$chart_dir" --namespace default
+              helm upgrade --install "$release_name" "${{ env.HELM_FOLDER }}" --namespace default
             else
               echo "Skipping $chart_dir: No Chart.yaml found."
             fi
