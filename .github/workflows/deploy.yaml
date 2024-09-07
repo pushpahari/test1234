@@ -7,7 +7,18 @@ on:
   pull_request:
     branches:
       - master
+
+  # Allow manual execution of apply and destroy
   workflow_dispatch:
+    inputs:
+      action:
+        description: 'Select action'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - apply
+          - destroy
   
 defaults:
   run:
