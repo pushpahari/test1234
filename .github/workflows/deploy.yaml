@@ -1,15 +1,14 @@
 name: Terraform Infrastructure Workflow
 
-# on:
-#   push:
-#     branches:
-#       - master
-#   pull_request:
-#     branches:
-#       - master
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
   # Allow manual execution of apply and destroy
-on:
   workflow_dispatch:
     inputs:
       action:
@@ -18,7 +17,7 @@ on:
         default: 'plan'
         type: choice
         options:
-          - plan
+          #- plan
           - apply
           - destroy
 
@@ -52,7 +51,6 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        if: ${{ github.event.inputs.action == 'plan' }}
         run: terraform plan -out=tfplan
 
   # terraform-prepare:
