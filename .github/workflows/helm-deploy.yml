@@ -3,11 +3,14 @@ name: Deploy Helm Charts to EKS
 on:
   push:
     branches:
-      - master
+      - main
+    paths:
+      - 'redis-helm-chart/**'
   pull_request:
     branches:
       - master
-  workflow_dispatch: # For manual triggers
+    paths:
+      - redis-helm-chart/**'
 
 env:
   EKS_CLUSTER_NAME: eks-cluster
