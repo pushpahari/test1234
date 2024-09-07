@@ -12,7 +12,7 @@ on:
 env:
   EKS_CLUSTER_NAME: eks-cluster
   AWS_REGION: ap-south-1
-  HELM_FOLDER: redis-helm-chart
+  #HELM_FOLDER: redis-helm-chart
 
 jobs:
   prepare:
@@ -69,9 +69,7 @@ jobs:
 
       - name: Deploy Helm chart
         run: |
-          helm repo add my-repo redis-helm-chart
-          helm repo update
-          helm upgrade --install my-release redis-helm-chart/my-chart 
+          helm upgrade --install my-release ./redis-helm-chart
 
 
 
