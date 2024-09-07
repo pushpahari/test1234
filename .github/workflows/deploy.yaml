@@ -89,7 +89,7 @@ jobs:
   terraform-destroy:
     name: Terraform Destroy
     runs-on: ubuntu-latest
-    needs: terraform-prepare
+    needs: terraform-apply
     env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
