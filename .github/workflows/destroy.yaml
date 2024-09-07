@@ -24,15 +24,11 @@ jobs:
         with:
            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           region: ${{ secrets.AWS_REGION }}
+           aws-region: ${{ secrets.AWS_REGION }}
 
       # Terraform Init (use the same backend and state as your deploy job)
       - name: Terraform Init
         run: terraform init
-
-      # Terraform Plan Destroy (optional)
-      - name: Terraform Plan Destroy
-        run: terraform plan -destroy
 
       # Terraform Destroy
       - name: Terraform Destroy
