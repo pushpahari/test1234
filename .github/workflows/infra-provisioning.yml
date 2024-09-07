@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'terraform/**'
   pull_request:
     branches:
       - master
+    paths:
+      - 'terraform/**'
 
   # Allow manual execution of apply and destroy
   workflow_dispatch:
