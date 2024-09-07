@@ -5,7 +5,7 @@ terraform {
       version = "5.65.0"
     }
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = "2.32.0"
     }
 
@@ -15,12 +15,12 @@ terraform {
     }
   }
   backend "s3" {
-    bucket         = "eks-backend"
-    key            = "backend/terraform.tfstate"
-    region         = "ap-south-1"
+    bucket = "eks-backend"
+    key    = "backend/terraform.tfstate"
+    region = "ap-south-1"
     #dynamodb_table = "my-terraform-lock-table"
-    encrypt        = true
-}
+    encrypt = true
+  }
 }
 
 provider "aws" {
@@ -41,7 +41,7 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    host = aws_eks_cluster.eks.endpoint
+    host                   = aws_eks_cluster.eks.endpoint
     cluster_ca_certificate = base64decode(aws_eks_cluster.eks.certificate_authority[0].data)
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
