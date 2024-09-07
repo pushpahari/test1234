@@ -72,7 +72,7 @@ jobs:
           for chart in $(find ${{ env.HELM_FOLDER }} -maxdepth 1 -type d); do
             if [[ -f "$chart/Chart.yaml" ]]; then
               chart_name=$(basename $chart)
-              chart_version=$(grep "version:" $chart/Chart.yaml | cut -d ' ' -f 2)
+              chart_version=$(grep "version:" $chart/Chart.yaml | cut -d ' ' -f 2 | tr '.' '-')
               release_name="${chart_name}-${chart_version}"
               
               # Debugging step to check values
