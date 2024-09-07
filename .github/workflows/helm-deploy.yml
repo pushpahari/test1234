@@ -11,7 +11,7 @@ on:
 
 env:
   EKS_CLUSTER_NAME: your-eks-cluster-name
-  AWS_REGION: your-aws-region
+  AWS_REGION: ap-south-1
   HELM_FOLDER: ./redis-helm-chart
 
 jobs:
