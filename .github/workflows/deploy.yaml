@@ -55,6 +55,15 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      # Step 2: Setup Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0  # Update with your version
+
       # Step 5: Terraform Apply (only runs on push to master branch)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master'  # Only apply on master branch
@@ -70,6 +79,14 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      # Step 2: Setup Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0 
       # Step 5: Terraform Apply (only runs on push to master branch)
       - name: Terraform Destroy
         if: github.ref == 'refs/heads/master'  # Only apply on master branch
