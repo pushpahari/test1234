@@ -3,7 +3,7 @@ resource "helm_release" "newrelic_k8s" {
   namespace  = "newrelic"
   repository = "https://helm-charts.newrelic.com"
   chart      = "newrelic-infrastructure"
-  version    = "3.0.0" # Make sure this is the latest
+  #version    = "3.0.0" # Make sure this is the latest
 
   values = [
     <<EOF
