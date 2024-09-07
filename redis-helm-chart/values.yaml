@@ -370,7 +370,7 @@ persistence:
   ## If disabled, an emptyDir volume is used. This is not recommended.
   ## ref: https://github.com/bitnami/charts/tree/main/bitnami/redis-cluster#persistence
   ##
-  enabled: false
+  enabled: false #true
   ## @param persistence.path Path to mount the volume at, to use other images Redis&reg; images.
   ##
   path: /bitnami/redis/data
