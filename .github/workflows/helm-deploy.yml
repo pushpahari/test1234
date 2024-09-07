@@ -10,7 +10,7 @@ on:
   workflow_dispatch: # For manual triggers
 
 env:
-  EKS_CLUSTER_NAME: your-eks-cluster-name
+  EKS_CLUSTER_NAME: eks-cluster
   AWS_REGION: ap-south-1
   HELM_FOLDER: ./redis-helm-chart
 
