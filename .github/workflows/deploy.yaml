@@ -19,6 +19,19 @@ defaults:
     working-directory: ./terraform
 
 jobs:
+  # terraform-format:
+  #   name: Terraform Format
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+
+  #     - name: Set up Terraform
+  #       uses: hashicorp/setup-terraform@v2
+
+  #     - name: Terraform Format Check
+  #       run: terraform fmt -check -recursive
+
   terraform-init:
     name: Terraform Init
     runs-on: ubuntu-latest
