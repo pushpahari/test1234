@@ -73,7 +73,7 @@ name: Deploy Helm Chart to EKS
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - 'redis-helm-chart/**'
   pull_request:
