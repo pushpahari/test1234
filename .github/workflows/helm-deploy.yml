@@ -74,12 +74,18 @@ jobs:
               chart_name=$(basename $chart)
               chart_version=$(grep "version:" $chart/Chart.yaml | cut -d ' ' -f 2)
               release_name="${chart_name}-${chart_version}"
-              echo "Deploying chart: $chart_name (version: $chart_version) as release: $release_name"
-              helm upgrade --install $release_name $chart --namespace default
+              
+              # Debugging step to check values
+              echo "Chart Path: $chart"
+              echo "Release Name: $release_name"
+
+              # Deploy using Helm
+              helm upgrade --install "$release_name" "$chart" --namespace default
             else
               echo "Skipping $chart: No Chart.yaml found."
             fi
           done
+
 
 
 
