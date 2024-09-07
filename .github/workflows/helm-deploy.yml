@@ -64,11 +64,23 @@
 
 name: Deploy Helm Chart to EKS
 
+# on:
+#   workflow_dispatch:
+#   push:
+#     paths:
+#       - 'redis-helm-chart/**'
+
 on:
-  workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'redis-helm-chart/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - redis-helm-chart/**'
 
 jobs:
   deploy_helm_chart:
