@@ -46,15 +46,34 @@ jobs:
         #   AWS_REGION: ${{ secrets.AWS_REGION }}
         run: terraform plan
 
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    steps:
       # Step 5: Terraform Apply (only runs on push to master branch)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master'  # Only apply on master branch
         working-directory: terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: terraform apply -auto-approve
+
+  terraform-destroy:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+    steps:
+      # Step 5: Terraform Apply (only runs on push to master branch)
+      - name: Terraform Destroy
+        if: github.ref == 'refs/heads/master'  # Only apply on master branch
+        working-directory: terraform
+        run: terraform destroy -auto-approve
+
 
 
 # name: "Terraform Infrastructure Change Management Pipeline with GitHub Actions"
