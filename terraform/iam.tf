@@ -67,3 +67,42 @@ resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_on
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.eks_node_role.name
 }
+
+# # Define IAM role for efs_csi_driver_role
+# resource "aws_iam_role" "efs_csi_driver_role" {
+#   name = "eks-efs-csi-driver-role"
+
+#   assume_role_policy = jsonencode({
+#     Version = "2012-10-17",
+#     Statement = [{
+#       Effect = "Allow",
+#       Principal = {
+#         Service = "ec2.amazonaws.com"
+#       },
+#       Action = "sts:AssumeRole"
+#     }]
+#   })
+# }
+
+# resource "aws_iam_policy" "efs_csi_driver_policy" {
+#   name        = "efs-csi-driver-policy"
+#   description = "EFS CSI Driver Policy"
+
+#   policy = jsonencode({
+#     Version = "2012-10-17",
+#     Statement = [
+#       {
+#         Effect = "Allow",
+#         Action = [
+#           "elasticfilesystem:*"
+#         ],
+#         Resource = "*"
+#       }
+#     ]
+#   })
+# }
+
+# resource "aws_iam_role_policy_attachment" "attach_policy" {
+#   role       = aws_iam_role.efs_csi_driver_role.name
+#   policy_arn = aws_iam_policy.efs_csi_driver_policy.arn
+# }
