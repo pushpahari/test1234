@@ -1,4 +1,4 @@
-name: Terraform Infrastructure Workflow
+name: Terraform Workflow
 
 on:
   push:
@@ -7,28 +7,11 @@ on:
   pull_request:
     branches:
       - master
-
-  # Allow manual execution of apply and destroy
   workflow_dispatch:
-    inputs:
-      action:
-        description: 'Select action'
-        required: true
-        default: 'plan'
-        type: choice
-        options:
-          #- plan
-          - apply
-          - destroy
-
-defaults:
-  run:
-    shell: bash
-    working-directory: ./terraform
 
 jobs:
   terraform-prepare:
-    name: Terraform Prepare
+    name: Terraform Init, Format, Validate, Plan
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -53,26 +36,89 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-  terraform-apply:
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-    needs: terraform-prepare
-    if: ${{ github.event.inputs.action == 'apply' }}
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Download Terraform Plan
-        uses: actions/download-artifact@v3
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v3
         with:
           name: tfplan
           path: ./terraform/tfplan
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+
+# name: Terraform Infrastructure Workflow
+
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     branches:
+#       - master
+
+#   # Allow manual execution of apply and destroy
+#   workflow_dispatch:
+#     inputs:
+#       action:
+#         description: 'Select action'
+#         required: true
+#         default: 'plan'
+#         type: choice
+#         options:
+#           #- plan
+#           - apply
+#           - destroy
+
+# defaults:
+#   run:
+#     shell: bash
+#     working-directory: ./terraform
+
+# jobs:
+#   terraform-prepare:
+#     name: Terraform Prepare
+#     runs-on: ubuntu-latest
+#     env:
+#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Terraform
+#         uses: hashicorp/setup-terraform@v2
+
+#       - name: Terraform Init
+#         run: terraform init
+
+#       - name: Terraform Format Check
+#         run: terraform fmt -check -recursive
+
+#       - name: Terraform Validate
+#         run: terraform validate
+
+#       - name: Terraform Plan
+#         run: terraform plan -out=tfplan
+
+#   terraform-apply:
+#     name: Terraform Apply
+#     runs-on: ubuntu-latest
+#     needs: terraform-prepare
+#     if: ${{ github.event.inputs.action == 'apply' }}
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Download Terraform Plan
+#         uses: actions/download-artifact@v3
+#         with:
+#           name: tfplan
+#           path: ./terraform/tfplan
+
+#       - name: Set up Terraform
+#         uses: hashicorp/setup-terraform@v2
+
+#       - name: Terraform Apply
+#         run: terraform apply -auto-approve tfplan
 
   # terraform-apply:
   #   name: Terraform Apply
